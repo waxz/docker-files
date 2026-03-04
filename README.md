@@ -14,9 +14,9 @@ docker compose build
 
 ```powershell
 
-docker compose run --rm app bash -c "ls && echo hello >> log.txt"
-docker compose run --rm app bash -ic "mkdir -p test && touch package.json && cd test && npm i"
-docker compose run --rm -q --remove-orphans app bash  -ic "mkdir -p test && touch package.json && cd test && npm i"
+docker compose run --rm drun bash -c "ls && echo hello >> log.txt"
+docker compose run --rm drun bash -ic "mkdir -p test && touch package.json && cd test && npm i"
+docker compose run --rm -q --remove-orphans drun bash  -ic "mkdir -p test && touch package.json && cd test && npm i"
 ```
 
 ### Use on Windows
@@ -33,7 +33,7 @@ notepad $PROFILE
 
 ```
 
-$Env:DOCKER_SHELL_CONFIG = "C:\\Users\\axdev\\programs\\docker\\docker-compose.yml"
+$Env:DOCKER_SHELL_CONFIG = "$HOME\programs\docker\docker-compose.yml"
 
 $Env:DOCKER_SHELL_SERVICE = "drun"
 

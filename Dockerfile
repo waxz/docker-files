@@ -1,5 +1,5 @@
 # Use the official Ubuntu base image
-FROM docker.m.daocloud.io/ubuntu:24.04
+FROM hub.rat.dev/ubuntu:24.04
 
 # Avoid prompts during installation
 ARG DEBIAN_FRONTEND=noninteractive
@@ -8,7 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # 1. Copy BOTH 'uv' and 'bun' binaries from their official images
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-COPY --from=docker.m.daocloud.io/oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=hub.rat.dev/oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
 
 # 2. Install only minimal system dependencies
 ARG DEBIAN_FRONTEND=noninteractive
