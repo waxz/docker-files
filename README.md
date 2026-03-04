@@ -1,44 +1,18 @@
+# docker compose for safe shell execution
 
 
+### build
 
-
-\### create Dockerfile
-
-
-
-```
-
-
-
-```
-
-
-
-\### create docker-compose.yml
-
-
-
-```
-
-```
-
-
-
-\### build
-
-
-
-```
+```powershell
 
 docker compose build
 
 ```
 
+### run
 
 
-\#### run
-
-```bash
+```powershell
 
 docker compose run --rm app bash -c "ls \&\& echo hello >> log.txt"
 
@@ -48,29 +22,19 @@ docker compose run --rm app bash -ic "mkdir -p test \&\& touch package.json \&\&
 
 docker compose run --rm -q --remove-orphans app bash  -ic "mkdir -p test \&\& touch package.json \&\& cd test \&\& npm i"
 
-
-
 ```
 
+### Use on Windows
 
 
+- create powershell profile
 
-
-\### Windows
-
-
-
-create powershell profile
-
-```
-
+```powershell
 notepad $PROFILE
 
 ```
 
-add 'drun' to profile
-
-
+- add 'drun' to profile
 
 ```
 
@@ -81,34 +45,21 @@ $Env:DOCKER\_SHELL\_SERVICE = "drun"
 function drun {
 
 
-
-
-
-&nbsp;   if ($Env:DOCKER\_SHELL\_CONFIG) {
-
-&nbsp;       # Use -f to point to the correct compose file location
-
-&nbsp;       docker compose -f "$Env:DOCKER\_SHELL\_CONFIG" run --rm -q --remove-orphans --remove-orphans $Env:DOCKER\_SHELL\_SERVICE bash -ic "$args"
-
-&nbsp;   } else {
-
-&nbsp;       Write-Error "Could not find docker-compose.yml in this or any parent directory."
-
-&nbsp;   }
-
+    if ($Env:DOCKER\_SHELL\_CONFIG) {
+        # Use -f to point to the correct compose file location
+        docker compose -f "$Env:DOCKER\_SHELL\_CONFIG" run --rm -q --remove-orphans --remove-orphans $Env:DOCKER\_SHELL\_SERVICE bash -ic "$args"
+    } else {
+        Write-Error "Could not find docker-compose.yml in this or any parent directory."
+    }
 }
 
 ```
 
 
+- use drun
 
 ```
 
 drun "uname -a"
 
 ```
-
-
-
-
-
