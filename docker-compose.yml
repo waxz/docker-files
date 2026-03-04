@@ -1,0 +1,24 @@
+services:
+  drun:
+    build: .
+    container_name: ubuntu-app
+    volumes:
+      # 1. READ-ONLY mount for your code
+      - ./app:/app
+      - ./app-ro:/app-ro:ro
+      
+      # 2. NAMED VOLUMES (Mappings happen HERE)
+      - node_data:/app/node_modules
+      - python_data:/app/.venv
+      
+      # 3. WRITABLE area for logs/outputs
+      - logs_data:/app/logs
+    working_dir: /app
+    stdin_open: true
+    tty: true 
+
+# Top-level volumes section ONLY defines the names
+volumes:
+  node_data:
+  python_data:
+  logs_data:

@@ -1,0 +1,11 @@
+# Ignore local dependencies
+node_modules
+__pycache__
+*.pyc
+venv
+
+# Ignore Git and secrets
+.git
+.env
+Dockerfile
+docker-compose.yml
