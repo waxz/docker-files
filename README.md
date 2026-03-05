@@ -38,13 +38,23 @@ $Env:DOCKER_SHELL_CONFIG = "$HOME\programs\docker\docker-compose.yml"
 $Env:DOCKER_SHELL_SERVICE = "drun"
 
 function drun {
+    if (Test-Path $Env:DOCKER_SHELL_CONFIG) {
+        # 1. Ensure the container is running; redirect all output to null to hide logs
+        docker compose -f "$Env:DOCKER_SHELL_CONFIG" up --quiet-pull --remove-orphans -d $Env:DOCKER_SHELL_SERVICE > $null 2>&1
 
+        # 2. Exec into the persistent container
+       
 
-    if ($Env:DOCKER_SHELL_CONFIG) {
-        # Use -f to point to the correct compose file location
-        docker compose -f "$Env:DOCKER_SHELL_CONFIG" run --rm -q --remove-orphans --remove-orphans $Env:DOCKER_SHELL_SERVICE bash -ic "$args"
+        if ($args.Count -eq 0) {
+            docker compose -f "$Env:DOCKER_SHELL_CONFIG" exec $Env:DOCKER_SHELL_SERVICE /usr/local/bin/entrypoint.sh
+        } else {
+            # Joining args ensures multi-word commands are passed correctly to bash
+            #$cmd = $args -join " "
+            $cmd = $args -join ' '
+            docker compose -f "$Env:DOCKER_SHELL_CONFIG" exec $Env:DOCKER_SHELL_SERVICE bash -c "$args"
+        }
     } else {
-        Write-Error "Could not find docker-compose.yml in this or any parent directory."
+        Write-Error "Could not find config at: $Env:DOCKER_SHELL_CONFIG"
     }
 }
 
