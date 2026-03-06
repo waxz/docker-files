@@ -5,15 +5,16 @@ services:
     network_mode: "host"
     mem_limit: 512m
     cpus: 0.5
-    
+    environment:
+      - DOCKER_SANDBOX_HOST_ROOT=${DOCKER_SANDBOX_HOST_ROOT:-./app}
+      - DOCKER_SANDBOX_WORKDIR=${DOCKER_SANDBOX_WORKDIR:-/app}
+      - COMPOSE_CONVERT_WINDOWS_PATHS=1
+      - BASH_ENV=/etc/bash.bashrc
     volumes:
       # 1. Unified host->sandbox workspace mapping
       - ${DOCKER_SANDBOX_HOST_ROOT:-./app}:${DOCKER_SANDBOX_WORKDIR:-/app}
-
-      
       # 2. NAMED VOLUMES (Mappings happen HERE)
       - python_data:/opt/.venv
-      
     working_dir: ${DOCKER_SANDBOX_WORKDIR:-/app}
     stdin_open: true
     tty: true 
