@@ -30,46 +30,33 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Generate and enable completions
-# RUN echo "source /etc/profile.d/bash_completion.sh" >> /etc/bash.bashrc && \
-#     mkdir -p /etc/bash_completion.d && \
-#     # Generate uv completions (explicitly for bash)
-#     uv generate-shell-completion bash > /etc/bash_completion.d/uv && \
-#     # Use getcompletes for bun to avoid shell detection errors
-#     bun getcompletes > /etc/bash_completion.d/bun
-
-
-
-# 3. Fix: Ensure aliases also attempt completion
-# This tells bash to use the same completion logic for 'npm' as it does for 'bun'
-#RUN echo 'complete -F _$BASH_COMPLETION_COMMAND npm 2>/dev/null || complete -F _bun npm' >> /etc/bash.bashrc
-
-# 4. Setup aliases and workspace
-RUN echo 'alias pip="uv pip"' >> /etc/bash.bashrc && \
-    echo 'alias npm="bun"' >> /etc/bash.bashrc
-
-# 5. Replace the alias line in your Dockerfile with this:
-RUN ln -s /usr/local/bin/bun /usr/local/bin/npm
-
-# 6. Persistent Tmux Entrypoint
-# This script checks if a tmux session exists; if not, it creates one.
-RUN echo '#!/bin/bash\n\
- tmux has-session -t docker 2>/dev/null\n\
- if [ $? != 0 ]; then\n\
-   tmux new-session -d -s docker\n\
- fi\n\
- tmux attach-session -t docker' > /usr/local/bin/entrypoint.sh && \
- chmod +x /usr/local/bin/entrypoint.sh
-
-
+# 3. Environment & Workspace Setup
+ENV UV_LINK_MODE=copy \
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV=/opt/.venv \
+    PATH="/opt/.venv/bin:/usr/local/bin:$PATH"
 
 WORKDIR /app
-RUN uv venv /app/.venv
-ENV PATH="/app/.venv/bin:$PATH"
 
-# Verify everything is working
-# RUN uv --version && bun --version && npm --version && python3 --version
+# 4. Venv & Completions
+RUN uv venv $VIRTUAL_ENV -p 3.12 && \
+    mkdir -p /etc/bash_completion.d && \
+    uv generate-shell-completion bash > /etc/bash_completion.d/uv && \
+    ln -s /usr/local/bin/bun /usr/local/bin/npm
 
+# 5. Global Shell Configuration (Ensures non-interactive shell support)
+RUN echo 'source /etc/profile.d/bash_completion.sh' >> /etc/bash.bashrc && \
+    echo 'source /opt/.venv/bin/activate' >> /etc/bash.bashrc && \
+    echo 'alias pip="uv pip"' >> /etc/bash.bashrc
 
-# Set the entrypoint to launch tmux automatically
+# 6. Improved Entrypoint Script
+# Uses "exec" to replace the shell with tmux and handles non-interactive commands
+RUN echo '#!/bin/bash\n\
+if [ "$#" -gt 0 ]; then\n\
+    exec "$@"\n\
+fi\n\
+tmux has-session -t docker 2>/dev/null || tmux new-session -d -s docker\n\
+exec tmux attach-session -t docker' > /usr/local/bin/entrypoint.sh && \
+chmod +x /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

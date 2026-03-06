@@ -2,23 +2,22 @@ services:
   drun:
     build: .
     container_name: ubuntu-app
+    network_mode: "host"
+    mem_limit: 512m
+    cpus: 0.5
+    
     volumes:
-      # 1. READ-ONLY mount for your code
-      - ./app:/app
-      - ./app-ro:/app-ro:ro
+      # 1. Unified host->sandbox workspace mapping
+      - ${DOCKER_SANDBOX_HOST_ROOT:-./app}:${DOCKER_SANDBOX_WORKDIR:-/app}
+
       
       # 2. NAMED VOLUMES (Mappings happen HERE)
-      - node_data:/app/node_modules
-      - python_data:/app/.venv
+      - python_data:/opt/.venv
       
-      # 3. WRITABLE area for logs/outputs
-      - logs_data:/app/logs
-    working_dir: /app
+    working_dir: ${DOCKER_SANDBOX_WORKDIR:-/app}
     stdin_open: true
     tty: true 
 
 # Top-level volumes section ONLY defines the names
 volumes:
-  node_data:
   python_data:
-  logs_data:
