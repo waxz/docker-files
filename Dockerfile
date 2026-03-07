@@ -51,12 +51,21 @@ RUN echo 'source /etc/profile.d/bash_completion.sh' >> /etc/bash.bashrc && \
 
 # 6. Improved Entrypoint Script
 # Uses "exec" to replace the shell with tmux and handles non-interactive commands
-RUN echo '#!/bin/bash\n\
+RUN printf '#!/bin/bash\n\
 if [ "$#" -gt 0 ]; then\n\
     exec "$@"\n\
 fi\n\
+\n\
+# Create the session if it doesn't exist\n\
 tmux has-session -t docker 2>/dev/null || tmux new-session -d -s docker\n\
-exec tmux attach-session -t docker' > /usr/local/bin/entrypoint.sh && \
-chmod +x /usr/local/bin/entrypoint.sh
+\n\
+# If there is no TTY (non-interactive), stay alive with tail\n\
+if [ ! -t 0 ]; then\n\
+    tail -f /dev/null\n\
+else\n\
+    exec tmux attach-session -t docker\n\
+fi' > /entrypoint.sh && \
+chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+ENTRYPOINT ["/entrypoint.sh"]
