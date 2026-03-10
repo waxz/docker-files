@@ -120,7 +120,7 @@ function drun {
         return
     }
 
-    Write-Host "Config: Service [$service] via [$file]" -ForegroundColor Cyan
+    # Write-Host "Config: Service [$service] via [$file]" -ForegroundColor Cyan
 
     # 3. Ensure Service is Running
     $checkRunning = { 
@@ -128,13 +128,13 @@ function drun {
     }
 
     if (-not (& $checkRunning)) {
-        Write-Host "Starting $service..." -ForegroundColor Yellow
+        # Write-Host "Starting $service..." -ForegroundColor Yellow
         
         # Inject paths into the environment for Compose interpolation
         $Env:DOCKER_SANDBOX_HOST_ROOT = $root
         $Env:DOCKER_SANDBOX_WORKDIR   = $workdir
 
-        docker compose -f $file up -d --quiet-pull --remove-orphans --no-recreate $service | Out-Null
+        docker compose -f $file up -d --quiet-pull --remove-orphans --no-recreate $service *>$null
         
         if (-not (& $checkRunning)) {
             Write-Error "Failed to start service $service."
@@ -142,7 +142,7 @@ function drun {
         }
     }
 
-    Write-Host "Service $service is Ready." -ForegroundColor Green
+    # Write-Host "Service $service is Ready." -ForegroundColor Green
 
     # 4. Execute
     if ($args.Count -eq 0) {
@@ -221,7 +221,7 @@ drun() {
         fi
     fi
 
-    echo "Service $DOCKER_SHELL_SERVICE is running. Ready"
+    # echo "Service $DOCKER_SHELL_SERVICE is running. Ready"
 
     # 3. Exec into the container
     if [ $# -eq 0 ]; then
