@@ -2,7 +2,7 @@ services:
   drun:
     build: .
     container_name: ubuntu-app
-    network_mode: "host"
+    network_mode: "bridge"
     mem_limit: 512m
     cpus: 0.5
     environment:
