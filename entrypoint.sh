@@ -1,12 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
+
+SESSION=docker
+
+# Ensure tmux session exists
+if command -v tmux >/dev/null 2>&1; then
+    tmux has-session -t "$SESSION" 2>/dev/null || tmux new-session -d -s "$SESSION"
+fi
+
+# If arguments were passed (docker exec or docker run cmd)
 if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
 
-tmux has-session -t docker 2>/dev/null || tmux new-session -d -s docker
-
+# Non-interactive environment (CI / GitHub Actions)
 if [ ! -t 0 ]; then
-    tail -f /dev/null
+    exec tail -f /dev/null
+fi
+
+# Interactive shell
+if command -v tmux >/dev/null 2>&1; then
+    exec tmux attach-session -t "$SESSION"
 else
-    exec tmux attach-session -t docker
+    exec bash
 fi
