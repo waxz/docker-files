@@ -71,7 +71,7 @@ docker run -d \
 --cap-drop ALL \
 --security-opt no-new-privileges \
 "$IMAGE" \
-sleep infinity >/dev/null
+tail -f /dev/null
 
 }
 

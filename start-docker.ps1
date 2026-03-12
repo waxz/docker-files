@@ -55,7 +55,7 @@ function Build-ImageIfNeeded {
 
         Write-Host "Building image $IMAGE..." -ForegroundColor Yellow
 
-        docker build -t $IMAGE $COMPOSE_DIR | Out-Null
+        docker build --platform linux/amd64 -t $IMAGE $COMPOSE_DIR | Out-Null
 
         Set-Content $hashFile $newHash
 
@@ -67,16 +67,21 @@ function Build-ImageIfNeeded {
 
 function Start-DrunContainer {
 
-    docker run -d `
+    $root = $DOCKER_SANDBOX_HOST_ROOT -replace '\\','/'
+    $root = $root -replace '^([A-Za-z]):','/$1'
+    $root = $root.ToLower()
+
+
+    docker run --platform linux/amd64 -d `
         --name $CONTAINER `
-        -v "$DOCKER_SANDBOX_HOST_ROOT`:$DOCKER_SANDBOX_WORKDIR" `
+        -v "$root:$DOCKER_SANDBOX_WORKDIR" `
         -w $DOCKER_SANDBOX_WORKDIR `
         --init `
         --network none `
         --cap-drop ALL `
         --security-opt no-new-privileges `
         $IMAGE `
-        sleep infinity | Out-Null
+        tail -f /dev/null | Out-Null
 
 }
 
