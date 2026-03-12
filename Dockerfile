@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     pkg-config \
     # 2. Networking & Debugging
-    curl net-tools wget \
+    curl net-tools wget iproute2 \
     iputils-ping dnsutils \
     # 3. CLI Utilities & Performance
     tmux ncdu nano \
@@ -34,15 +34,15 @@ RUN apt-get update && apt-get install -y \
 ENV UV_LINK_MODE=copy \
     PYTHONUNBUFFERED=1 \
     VIRTUAL_ENV=/opt/.venv \
-    PATH="/opt/.venv/bin:/usr/local/bin:$PATH"
+    PATH="/opt/.venv/bin:/usr/local/bin:/root/.bun/bin:$PATH"
 
 WORKDIR /app
 
 # 4. Venv & Completions
-RUN uv venv $VIRTUAL_ENV -p 3.12 && \
-    mkdir -p /etc/bash_completion.d && \
+RUN mkdir -p /etc/bash_completion.d && \
     uv generate-shell-completion bash > /etc/bash_completion.d/uv && \
-    ln -s /usr/local/bin/bun /usr/local/bin/npm
+    ln -s /usr/local/bin/bun /usr/local/bin/npm &&\
+    ln -s /usr/local/bin/bun /usr/local/bin/node
 
 # 5. Global Shell Configuration (Ensures non-interactive shell support)
 RUN echo 'source /etc/profile.d/bash_completion.sh' >> /etc/bash.bashrc && \
@@ -52,5 +52,5 @@ RUN echo 'source /etc/profile.d/bash_completion.sh' >> /etc/bash.bashrc && \
 # 6. Improved Entrypoint Script
 # Uses "exec" to replace the shell with tmux and handles non-interactive commands
 COPY ./entrypoint.sh /entrypoint.sh
-
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

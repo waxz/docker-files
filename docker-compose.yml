@@ -2,9 +2,16 @@ services:
   drun:
     build: .
     container_name: ubuntu-app
-    network_mode: "bridge"
-    mem_limit: 512m
-    cpus: 0.5
+
+    # host not working on windows, use direct mapping
+    # http://host.docker.internal for host
+    # network_mode: "host"
+    ports:
+      - "6274:6274"
+      - "8000:8000"
+
+    # mem_limit: 512m
+    # cpus: 0.5
     environment:
       - DOCKER_SANDBOX_HOST_ROOT=${DOCKER_SANDBOX_HOST_ROOT:-./app}
       - DOCKER_SANDBOX_WORKDIR=${DOCKER_SANDBOX_WORKDIR:-/app}
@@ -14,11 +21,13 @@ services:
       # 1. Unified host->sandbox workspace mapping
       - ${DOCKER_SANDBOX_HOST_ROOT:-./app}:${DOCKER_SANDBOX_WORKDIR:-/app}
       # 2. NAMED VOLUMES (Mappings happen HERE)
-      - python_data:/opt/.venv
+      - ./python_data:/opt/.venv
+      - ./node_data:/root/.bun
+      - ./shell:/opt/shell
     working_dir: ${DOCKER_SANDBOX_WORKDIR:-/app}
     stdin_open: true
     tty: true 
 
 # Top-level volumes section ONLY defines the names
-volumes:
-  python_data:
+# volumes:
+#   python_data:
