@@ -80,8 +80,9 @@ function Start-DrunContainer {
         --network none `
         --cap-drop ALL `
         --security-opt no-new-privileges `
-        $IMAGE `
-        tail -f /dev/null | Out-Null
+        $IMAGE | Out-Null
+
+    docker logs $CONTAINER
 
 }
 

@@ -70,9 +70,9 @@ docker run -d \
 --network none \
 --cap-drop ALL \
 --security-opt no-new-privileges \
-"$IMAGE" \
-tail -f /dev/null
+"$IMAGE"
 
+docker logs "$CONTAINER"
 }
 
 
