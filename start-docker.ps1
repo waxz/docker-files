@@ -16,7 +16,7 @@ function Resolve-DrunEnv {
     $script:DOCKER_SANDBOX_WORKDIR = if ($Env:DOCKER_SANDBOX_WORKDIR_OVERRIDE) { $Env:DOCKER_SANDBOX_WORKDIR_OVERRIDE } else { $Env:DOCKER_SANDBOX_WORKDIR_DEFAULT }
 
     $script:COMPOSE_DIR = Split-Path $DOCKER_SHELL_COMPOSE_FILE -Parent
-    $script:DOCKERFILE = Join-Path $COMPOSE_DIR "Dockerfile.drun"
+    $script:DOCKERFILE = Join-Path $COMPOSE_DIR "Dockerfile"
 
     $script:IMAGE = "$SERVICE-image"
     $script:CONTAINER = $SERVICE
