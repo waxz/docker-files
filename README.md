@@ -29,6 +29,16 @@ docker compose --env-file .env.wsl build
 
 ```
 
+### source file
+
+```
+source ./start-docker.sh
+
+. ./start-docker.ps1
+
+```
+
+
 ### run
 
 
