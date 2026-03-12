@@ -122,13 +122,13 @@ fi
 
 if [ $# -eq 0 ]; then
 
-    docker exec -it "$CONTAINER" /usr/local/bin/entrypoint.sh
+    docker exec -t "$CONTAINER" /entrypoint.sh
 
 else
 
     CMD_B64="$(printf "%s" "$*" | base64 -w0)"
 
-    docker exec -it "$CONTAINER" bash -c \
+    docker exec -t "$CONTAINER" bash -c \
     "source /etc/bash.bashrc 2>/dev/null; echo $CMD_B64 | base64 -d | bash"
 
 fi

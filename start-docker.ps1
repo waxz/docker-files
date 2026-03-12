@@ -131,7 +131,7 @@ function drun {
 
     if ($args.Count -eq 0) {
 
-        docker exec -it $CONTAINER /usr/local/bin/entrypoint.sh
+        docker exec -t $CONTAINER /entrypoint.sh
 
     }
     else {
@@ -140,7 +140,7 @@ function drun {
         $cmdBytes = [System.Text.Encoding]::UTF8.GetBytes($cmd)
         $cmdB64 = [Convert]::ToBase64String($cmdBytes)
 
-        docker exec -it $CONTAINER bash -c "source /etc/bash.bashrc 2>/dev/null; echo $cmdB64 | base64 -d | bash"
+        docker exec -t $CONTAINER bash -c "source /etc/bash.bashrc 2>/dev/null; echo $cmdB64 | base64 -d | bash"
 
     }
 
