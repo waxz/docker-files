@@ -16,7 +16,7 @@ function Resolve-DrunEnv {
     $script:DOCKER_SANDBOX_WORKDIR = if ($Env:DOCKER_SANDBOX_WORKDIR_OVERRIDE) { $Env:DOCKER_SANDBOX_WORKDIR_OVERRIDE } else { $Env:DOCKER_SANDBOX_WORKDIR_DEFAULT }
 
     $script:COMPOSE_DIR = Split-Path $DOCKER_SHELL_COMPOSE_FILE -Parent
-    $script:DOCKERFILE = Join-Path $COMPOSE_DIR "Dockerfile"
+    $script:DOCKERFILE = Join-Path $COMPOSE_DIR "Dockerfile.drun"
 
     $script:IMAGE = "$SERVICE-image"
     $script:CONTAINER = $SERVICE
@@ -74,7 +74,7 @@ function Start-DrunContainer {
 
     docker run --platform linux/amd64 -d `
         --name $CONTAINER `
-        -v "$root:$DOCKER_SANDBOX_WORKDIR" `
+        -v "$root`:$DOCKER_SANDBOX_WORKDIR" `
         -w $DOCKER_SANDBOX_WORKDIR `
         --init `
         --network none `
