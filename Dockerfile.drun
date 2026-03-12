@@ -52,5 +52,5 @@ RUN echo 'source /etc/profile.d/bash_completion.sh' >> /etc/bash.bashrc && \
 # 6. Improved Entrypoint Script
 # Uses "exec" to replace the shell with tmux and handles non-interactive commands
 COPY ./entrypoint.sh /entrypoint.sh
-
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
